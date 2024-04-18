@@ -1,9 +1,23 @@
-import React from "react";
-import { SafeAreaView, View, ScrollView, Text, Image, ImageBackground, } from "react-native";
-//import LinearGradient from 'react-native-linear-gradient'; // Install LinearGradient: https://github.com/react-native-linear-gradient/react-native-linear-gradient
-
 export default function HomePageNo() {
-    
+    const [userData, setUserData] = useState(null);
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+			try {
+				const response = await fetch('http://192.168.1.20:3000/datos');
+				const json = await response.json();
+				console.log(json);
+				if (json.length > 0) {
+					setUserData(json[0]); // Accede al primer elemento del array
+				}
+			} catch (error) {
+				console.error('Error al cargar los datos del usuario:', error);
+			}
+		};
+		
+
+        fetchUserData();
+    }, []);
     
     return (
         <SafeAreaView 
@@ -34,6 +48,15 @@ export default function HomePageNo() {
 						marginBottom: 1,
 						marginHorizontal: 24,
 					}}>
+						{userData && (
+                <View style={styles.headerContainer}>
+                    <Text style={styles.welcomeText}>Hola, {userData.firstName}!</Text>
+                    <Text style={styles.userInfo}>
+                        Email: {userData.email}{"\n"}
+                        Edad: {userData.age} años
+                    </Text>
+                </View>
+            )}
 					<Text 
 						style = {{
 							fontSize: 24,
@@ -418,3 +441,74 @@ export default function HomePageNo() {
 		
     )
 }
+
+
+const styles = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+        backgroundColor: "#FFFFFF",
+    },
+    scrollView: {
+        flex: 1,
+        backgroundColor: "#000000",
+        borderRadius: 30,
+        paddingTop: 20,
+        paddingHorizontal: 15,
+        shadowColor: "#000",
+        shadowOpacity: 0.5,
+        shadowOffset: { width: 0, height: 2 },
+        shadowRadius: 10,
+        elevation: 10,
+    },
+    headerContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        paddingVertical: 10,
+        paddingHorizontal: width * 0.05, // 5% of screen width
+		backgroundColor: "#fff",
+    },
+    welcomeText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#000', // Assuming white text on a black background for contrast
+    },
+    userInfo: {
+        fontSize: 14,
+        color: '#000',
+    },
+    checkboxContainer: {
+        flexDirection: 'row',
+        marginTop: 10,
+    },
+    checkbox: {
+        width: 24,
+        height: 24,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 2,
+        borderColor: '#FFF',
+        marginRight: 10,
+    },
+    checkboxChecked: {
+        backgroundColor: '#FFF',
+    },
+    checkboxIcon: {
+        color: '#000',
+    },
+    mainScrollView: {
+        flex: 1,
+        backgroundColor: "#000000",
+        borderRadius: 63,
+        paddingTop: 33,
+        shadowColor: "#000000C4",
+        shadowOpacity: 0.8,
+        shadowOffset: {
+            width: 0,
+            height: 4
+        },
+        shadowRadius: 61,
+        elevation: 61,
+    },
+    // Más estilos aquí
+});
